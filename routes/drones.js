@@ -5,24 +5,47 @@ const router = express.Router();
 
 const Drone = require('../models/Drone.model');
 
-router.get('/drones', (req, res, next) => {
-  Drone.find()
-    .then((list) => {
-      res.render('drones/list', list);
-    })
-    .catch((err) => {
-      next(err);
-      console.log(err);
-    });
-}),
-  router.get('/drones/create', (req, res, next) => {
-    // Iteration #3: Add a new drone
-    // ... your code here
-  });
+// Promise
+// router.get('/drones', (req, res, next) => {
+//   Drone.find()
+//     .then((list) => {
+//       res.render('drones/list', list);
+//     })
+//     .catch((err) => {
+//       next(err);
+//       console.log(err);
+//     });
+// }),
 
-router.post('/drones/create', (req, res, next) => {
-  // Iteration #3: Add a new drone
-  // ... your code here
+router.get('/drones', async (req, res, next) => {
+  try {
+    const list = await Drone.find();
+    res.render('drones/list', list);
+  } catch (err) {
+    console.log(err.message);
+    res.redirect('/');
+  }
+});
+
+router.get('/drones/create', async (req, res, next) => {
+  try {
+    const form = await Drone.find();
+    res.render('drones/create-form', form);
+  } catch (err) {
+    console.log(err.message);
+    res.redirect('/');
+  }
+});
+
+router.post('/drones/create', async (req, res, next) => {
+  const { name, propellers, maxSpeed } = req.body;
+  try {
+    await Drone.create({ name, propellers, maxSpeed });
+    res.redirect('/drones');
+  } catch (err) {
+    console.log(err.message);
+    res.redirect('/drones/create');
+  }
 });
 
 router.get('/drones/:id/edit', (req, res, next) => {
